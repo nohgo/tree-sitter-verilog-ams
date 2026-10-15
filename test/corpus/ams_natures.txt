@@ -1,0 +1,102 @@
+==================
+Nature attributes and inheritance
+==================
+
+nature Voltage;
+  units = "V";
+  access = V;
+  abstol = 1u;
+  idt_nature = Flux;
+  ddt_nature = Slew;
+endnature
+nature Sensitive : Voltage
+  abstol = 1n;
+endnature
+nature Derived : electrical.potential;
+  units = "scaled";
+endnature
+
+---
+
+(source_file
+  (nature_declaration
+    (simple_identifier)
+    (nature_attribute
+      (expression
+        (primary
+          (primary_literal
+            (string_literal)))))
+    (nature_attribute
+      (expression
+        (primary
+          (simple_identifier))))
+    (nature_attribute
+      (expression
+        (primary
+          (primary_literal
+            (real_number
+              (scaled_real_number))))))
+    (nature_attribute
+      (expression
+        (primary
+          (simple_identifier))))
+    (nature_attribute
+      (expression
+        (primary
+          (simple_identifier)))))
+  (nature_declaration
+    (simple_identifier)
+    (nature_reference
+      (simple_identifier))
+    (nature_attribute
+      (expression
+        (primary
+          (primary_literal
+            (real_number
+              (scaled_real_number)))))))
+  (nature_declaration
+    (simple_identifier)
+    (nature_reference
+      (simple_identifier))
+    (nature_attribute
+      (expression
+        (primary
+          (primary_literal
+            (string_literal)))))))
+
+==================
+Disciplines and attribute overrides
+==================
+
+discipline electrical;
+  potential Voltage;
+  flow Current;
+  domain continuous;
+  potential.abstol = 1u;
+enddiscipline
+discipline logic;
+  domain discrete;
+enddiscipline
+
+---
+
+(source_file
+  (discipline_declaration
+    (discipline_identifier
+      (simple_identifier))
+    (nature_binding
+      (simple_identifier))
+    (nature_binding
+      (simple_identifier))
+    (discipline_domain_binding)
+    (nature_attribute_override
+      (nature_attribute
+        (expression
+          (primary
+            (primary_literal
+              (real_number
+                (scaled_real_number))))))))
+  (discipline_declaration
+    (discipline_identifier
+      (simple_identifier))
+    (discipline_domain_binding)))

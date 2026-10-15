@@ -1,0 +1,139 @@
+==================
+Comments, includes, definitions and conditionals
+==================
+
+// Preserve the original source; includes are not resolved.
+`include "disciplines.vams"
+`define GAIN (2.0)
+`define SCALE(x) ((x) * `GAIN)
+`define CONTRIB(p, n) \
+  I(p,n) <+ V(p,n)
+module macros(p, n);
+  inout p, n;
+  electrical p, n;
+  /* A block comment beside a parameter. */
+  parameter real gain = `GAIN;
+  analog begin
+`ifdef ACTIVE
+    I(p, n) <+ `SCALE(V(p, n)); // attached comment
+`else
+    I(p, n) <+ 0.0;
+`endif
+  end
+endmodule
+
+---
+
+(source_file
+  (comment)
+  (include_compiler_directive
+    (double_quoted_string))
+  (text_macro_definition
+    (text_macro_name
+      (text_macro_identifier
+        (simple_identifier)))
+    (macro_text))
+  (text_macro_definition
+    (text_macro_name
+      (text_macro_identifier
+        (simple_identifier)))
+    (macro_text))
+  (text_macro_definition
+    (text_macro_name
+      (text_macro_identifier
+        (simple_identifier)))
+    (macro_text))
+  (module_declaration
+    (module_header
+      (module_keyword)
+      (simple_identifier))
+    (module_nonansi_header
+      (list_of_ports
+        (port
+          (port_reference
+            (port_identifier
+              (simple_identifier))))
+        (port
+          (port_reference
+            (port_identifier
+              (simple_identifier))))))
+    (port_declaration
+      (inout_declaration
+        (list_of_port_identifiers
+          (port_identifier
+            (simple_identifier))
+          (port_identifier
+            (simple_identifier)))))
+    (module_or_generate_item
+      (net_declaration
+        (discipline_identifier
+          (simple_identifier))
+        (list_of_net_decl_assignments
+          (net_decl_assignment
+            (simple_identifier))
+          (net_decl_assignment
+            (simple_identifier)))))
+    (comment)
+    (module_or_generate_item
+      (parameter_declaration
+        (parameter_type)
+        (list_of_param_assignments
+          (param_assignment
+            (parameter_identifier
+              (simple_identifier))
+            (constant_mintypmax_expression
+              (constant_expression
+                (constant_primary
+                  (primary_literal
+                    (text_macro_usage
+                      (text_macro_identifier
+                        (simple_identifier)))))))))))
+    (module_or_generate_item
+      (analog_construct
+        (analog_statement
+          (analog_seq_block
+            (id_directive
+              (text_macro_identifier
+                (simple_identifier)))
+            (analog_statement
+              (contribution_statement
+                (branch_access
+                  (simple_identifier)
+                  (branch_terminal
+                    (simple_identifier))
+                  (branch_terminal
+                    (simple_identifier)))
+                (expression
+                  (primary
+                    (primary_literal
+                      (text_macro_usage
+                        (text_macro_identifier
+                          (simple_identifier))
+                        (argument_list
+                          (expression
+                            (primary
+                              (function_call
+                                (simple_identifier)
+                                (argument_list
+                                  (expression
+                                    (primary
+                                      (simple_identifier)))
+                                  (expression
+                                    (primary
+                                      (simple_identifier))))))))))))))
+            (comment)
+            (zero_directive)
+            (analog_statement
+              (contribution_statement
+                (branch_access
+                  (simple_identifier)
+                  (branch_terminal
+                    (simple_identifier))
+                  (branch_terminal
+                    (simple_identifier)))
+                (expression
+                  (primary
+                    (primary_literal
+                      (real_number
+                        (fixed_point_number)))))))
+            (zero_directive)))))))

@@ -1,0 +1,475 @@
+==================
+Mixed analog and digital behavior
+==================
+
+module mixed(input clk, output reg state, inout electrical p);
+  real value;
+  initial state = 0;
+  always @(posedge clk) begin
+    state <= ~state;
+  end
+  analog begin
+    @(initial_step) value = 0.0;
+    @(posedge clk) value = state ? 1.2 : 0.0;
+    V(p) <+ transition(value, 0, 1n);
+  end
+endmodule
+
+---
+
+(source_file
+  (module_declaration
+    (module_header
+      (module_keyword)
+      (simple_identifier))
+    (module_ansi_header
+      (list_of_port_declarations
+        (ansi_port_declaration
+          (port_direction)
+          (port_identifier
+            (simple_identifier)))
+        (ansi_port_declaration
+          (port_direction)
+          (port_identifier
+            (simple_identifier)))
+        (ansi_port_declaration
+          (port_direction)
+          (discipline_identifier
+            (simple_identifier))
+          (port_identifier
+            (simple_identifier)))))
+    (module_or_generate_item
+      (data_declaration
+        (data_type
+          (non_integer_type))
+        (list_of_variable_decl_assignments
+          (variable_decl_assignment
+            (simple_identifier)))))
+    (module_or_generate_item
+      (initial_construct
+        (statement_or_null
+          (statement
+            (statement_item
+              (blocking_assignment
+                (variable_lvalue
+                  (simple_identifier))
+                (expression
+                  (primary
+                    (primary_literal
+                      (integral_number
+                        (decimal_number
+                          (unsigned_number))))))))))))
+    (module_or_generate_item
+      (always_construct
+        (always_keyword)
+        (statement
+          (statement_item
+            (procedural_timing_control_statement
+              (event_control
+                (event_expression
+                  (edge_identifier)
+                  (expression
+                    (primary
+                      (simple_identifier)))))
+              (statement_or_null
+                (statement
+                  (statement_item
+                    (seq_block
+                      (statement_or_null
+                        (statement
+                          (statement_item
+                            (nonblocking_assignment
+                              (variable_lvalue
+                                (simple_identifier))
+                              (expression
+                                (unary_operator)
+                                (primary
+                                  (simple_identifier))))))))))))))))
+    (module_or_generate_item
+      (analog_construct
+        (analog_statement
+          (analog_seq_block
+            (analog_statement
+              (analog_event_control_statement
+                (analog_event_control
+                  (analog_event_expression
+                    (analog_step_event)))
+                (analog_statement
+                  (analog_procedural_assignment
+                    (variable_assignment
+                      (variable_lvalue
+                        (simple_identifier))
+                      (expression
+                        (primary
+                          (primary_literal
+                            (real_number
+                              (fixed_point_number))))))))))
+            (analog_statement
+              (analog_event_control_statement
+                (analog_event_control
+                  (analog_event_expression
+                    (edge_identifier)
+                    (expression
+                      (primary
+                        (simple_identifier)))))
+                (analog_statement
+                  (analog_procedural_assignment
+                    (variable_assignment
+                      (variable_lvalue
+                        (simple_identifier))
+                      (expression
+                        (conditional_expression
+                          (expression
+                            (primary
+                              (simple_identifier)))
+                          (expression
+                            (primary
+                              (primary_literal
+                                (real_number
+                                  (fixed_point_number)))))
+                          (expression
+                            (primary
+                              (primary_literal
+                                (real_number
+                                  (fixed_point_number))))))))))))
+            (analog_statement
+              (contribution_statement
+                (branch_access
+                  (simple_identifier)
+                  (branch_terminal
+                    (simple_identifier)))
+                (expression
+                  (primary
+                    (function_call
+                      (simple_identifier)
+                      (argument_list
+                        (expression
+                          (primary
+                            (simple_identifier)))
+                        (expression
+                          (primary
+                            (primary_literal
+                              (integral_number
+                                (decimal_number
+                                  (unsigned_number))))))
+                        (expression
+                          (primary
+                            (primary_literal
+                              (real_number
+                                (scaled_real_number)))))))))))))))))
+
+==================
+Analog generate loop and module instances
+==================
+
+module bank(p, n);
+  electrical [3:0] p;
+  electrical n;
+  genvar k;
+  generate
+    for (k = 0; k < 4; k = k + 1) begin : cells
+      resistor #(.r(1k)) r0(.p(p[k]), .n(n));
+    end
+  endgenerate
+  analog for (k = 0; k < 4; k = k + 1) I(p[k], n) <+ 1u;
+endmodule
+
+---
+
+(source_file
+  (module_declaration
+    (module_header
+      (module_keyword)
+      (simple_identifier))
+    (module_nonansi_header
+      (list_of_ports
+        (port
+          (port_reference
+            (port_identifier
+              (simple_identifier))))
+        (port
+          (port_reference
+            (port_identifier
+              (simple_identifier))))))
+    (module_or_generate_item
+      (net_declaration
+        (discipline_identifier
+          (simple_identifier))
+        (packed_dimension
+          (constant_range
+            (constant_expression
+              (constant_primary
+                (primary_literal
+                  (integral_number
+                    (decimal_number
+                      (unsigned_number))))))
+            (constant_expression
+              (constant_primary
+                (primary_literal
+                  (integral_number
+                    (decimal_number
+                      (unsigned_number))))))))
+        (list_of_net_decl_assignments
+          (net_decl_assignment
+            (simple_identifier)))))
+    (module_or_generate_item
+      (net_declaration
+        (discipline_identifier
+          (simple_identifier))
+        (list_of_net_decl_assignments
+          (net_decl_assignment
+            (simple_identifier)))))
+    (module_or_generate_item
+      (genvar_declaration
+        (list_of_genvar_identifiers
+          (genvar_identifier
+            (simple_identifier)))))
+    (generate_region
+      (module_or_generate_item
+        (loop_generate_construct
+          (genvar_initialization
+            (genvar_identifier
+              (simple_identifier))
+            (constant_expression
+              (constant_primary
+                (primary_literal
+                  (integral_number
+                    (decimal_number
+                      (unsigned_number)))))))
+          (constant_expression
+            (constant_expression
+              (constant_primary
+                (simple_identifier)))
+            (constant_expression
+              (constant_primary
+                (primary_literal
+                  (integral_number
+                    (decimal_number
+                      (unsigned_number)))))))
+          (genvar_iteration
+            (genvar_identifier
+              (simple_identifier))
+            (assignment_operator)
+            (constant_expression
+              (constant_expression
+                (constant_primary
+                  (simple_identifier)))
+              (constant_expression
+                (constant_primary
+                  (primary_literal
+                    (integral_number
+                      (decimal_number
+                        (unsigned_number))))))))
+          (generate_block
+            (generate_block_identifier
+              (generate_block_identifier
+                (simple_identifier)))
+            (module_or_generate_item
+              (module_instantiation
+                (simple_identifier)
+                (parameter_value_assignment
+                  (list_of_parameter_assignments
+                    (named_parameter_assignment
+                      (parameter_identifier
+                        (simple_identifier))
+                      (param_expression
+                        (mintypmax_expression
+                          (expression
+                            (primary
+                              (primary_literal
+                                (real_number
+                                  (scaled_real_number))))))))))
+                (hierarchical_instance
+                  (name_of_instance
+                    (instance_identifier
+                      (simple_identifier)))
+                  (list_of_port_connections
+                    (named_port_connection
+                      (port_identifier
+                        (simple_identifier))
+                      (expression
+                        (primary
+                          (simple_identifier)
+                          (select1
+                            (bit_select1
+                              (expression
+                                (primary
+                                  (simple_identifier))))))))
+                    (named_port_connection
+                      (port_identifier
+                        (simple_identifier))
+                      (expression
+                        (primary
+                          (simple_identifier))))))))))))
+    (module_or_generate_item
+      (analog_construct
+        (analog_statement
+          (analog_loop_statement
+            (variable_assignment
+              (variable_lvalue
+                (simple_identifier))
+              (expression
+                (primary
+                  (primary_literal
+                    (integral_number
+                      (decimal_number
+                        (unsigned_number)))))))
+            (expression
+              (expression
+                (primary
+                  (simple_identifier)))
+              (expression
+                (primary
+                  (primary_literal
+                    (integral_number
+                      (decimal_number
+                        (unsigned_number)))))))
+            (variable_assignment
+              (variable_lvalue
+                (simple_identifier))
+              (expression
+                (expression
+                  (primary
+                    (simple_identifier)))
+                (expression
+                  (primary
+                    (primary_literal
+                      (integral_number
+                        (decimal_number
+                          (unsigned_number))))))))
+            (analog_statement
+              (contribution_statement
+                (branch_access
+                  (simple_identifier)
+                  (branch_terminal
+                    (simple_identifier)
+                    (constant_select1
+                      (constant_expression
+                        (constant_primary
+                          (simple_identifier)))))
+                  (branch_terminal
+                    (simple_identifier)))
+                (expression
+                  (primary
+                    (primary_literal
+                      (real_number
+                        (scaled_real_number)))))))))))))
+
+==================
+Connectmodule and connectrules
+==================
+
+discipline logic;
+  domain discrete;
+enddiscipline
+connectmodule e2l(input electrical a, output reg d);
+  always @(cross(V(a) - 0.5)) d = V(a) > 0.5;
+endmodule
+connectrules bridge;
+  connect e2l merged #(.threshold(0.5)) input electrical, output logic;
+  connect electrical, logic resolveto electrical;
+  connect logic resolveto exclude;
+endconnectrules
+
+---
+
+(source_file
+  (discipline_declaration
+    (discipline_identifier
+      (simple_identifier))
+    (discipline_domain_binding))
+  (module_declaration
+    (module_header
+      (module_keyword)
+      (simple_identifier))
+    (module_ansi_header
+      (list_of_port_declarations
+        (ansi_port_declaration
+          (port_direction)
+          (discipline_identifier
+            (simple_identifier))
+          (port_identifier
+            (simple_identifier)))
+        (ansi_port_declaration
+          (port_direction)
+          (port_identifier
+            (simple_identifier)))))
+    (module_or_generate_item
+      (always_construct
+        (always_keyword)
+        (statement
+          (statement_item
+            (procedural_timing_control_statement
+              (event_control
+                (event_expression
+                  (expression
+                    (primary
+                      (function_call
+                        (simple_identifier)
+                        (argument_list
+                          (expression
+                            (expression
+                              (primary
+                                (function_call
+                                  (simple_identifier)
+                                  (argument_list
+                                    (expression
+                                      (primary
+                                        (simple_identifier)))))))
+                            (expression
+                              (primary
+                                (primary_literal
+                                  (real_number
+                                    (fixed_point_number))))))))))))
+              (statement_or_null
+                (statement
+                  (statement_item
+                    (blocking_assignment
+                      (variable_lvalue
+                        (simple_identifier))
+                      (expression
+                        (expression
+                          (primary
+                            (function_call
+                              (simple_identifier)
+                              (argument_list
+                                (expression
+                                  (primary
+                                    (simple_identifier)))))))
+                        (expression
+                          (primary
+                            (primary_literal
+                              (real_number
+                                (fixed_point_number))))))))))))))))
+  (connectrules_declaration
+    (simple_identifier)
+    (connect_insertion
+      (simple_identifier)
+      (parameter_value_assignment
+        (list_of_parameter_assignments
+          (named_parameter_assignment
+            (parameter_identifier
+              (simple_identifier))
+            (param_expression
+              (mintypmax_expression
+                (expression
+                  (primary
+                    (primary_literal
+                      (real_number
+                        (fixed_point_number))))))))))
+      (port_direction)
+      (discipline_identifier
+        (simple_identifier))
+      (port_direction)
+      (discipline_identifier
+        (simple_identifier)))
+    (connect_resolution
+      (discipline_identifier
+        (simple_identifier))
+      (discipline_identifier
+        (simple_identifier))
+      (discipline_identifier
+        (simple_identifier)))
+    (connect_resolution
+      (discipline_identifier
+        (simple_identifier)))))

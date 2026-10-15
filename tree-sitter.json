@@ -1,37 +1,20 @@
 {
   "grammars": [
     {
-      "name": "verilog",
-      "camelcase": "Verilog",
-      "scope": "source.verilog",
+      "name": "verilog_ams",
+      "camelcase": "VerilogAMS",
+      "scope": "source.verilogams",
       "path": ".",
-      "file-types": null,
-      "injection-regex": "^verilog$"
+      "file-types": ["va", "vams", "vah"],
+      "injection-regex": "^(verilog_ams|verilogams)$",
+      "highlights": "queries/highlights.scm"
     }
   ],
   "metadata": {
-    "version": "1.0.3",
+    "version": "0.1.0",
     "license": "MIT",
-    "description": "Verilog grammar for tree-sitter",
-    "authors": [
-      {
-        "name": "Aliaksei Chapyzhenka"
-      },
-      {
-        "name": "Amaan Qureshi",
-        "email": "amaanq12@gmail.com"
-      }
-    ],
-    "links": {
-      "repository": "https://github.com/tree-sitter/tree-sitter-verilog"
-    }
+    "description": "Verilog-A and Verilog-AMS 2.4 grammar extending tree-sitter-verilog",
+    "authors": [{"name": "Aliaksei Chapyzhenka"}, {"name": "Amaan Qureshi"}]
   },
-  "bindings": {
-    "c": true,
-    "go": true,
-    "node": true,
-    "python": true,
-    "rust": true,
-    "swift": true
-  }
+  "bindings": {"c": true, "rust": true}
 }

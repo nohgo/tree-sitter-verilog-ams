@@ -1,0 +1,103 @@
+==================
+Upstream: net_declaration - wire
+==================
+
+module mod ();
+  wire a;
+endmodule
+
+---
+
+(source_file
+  (module_declaration
+    (module_header
+      (module_keyword)
+      (simple_identifier))
+    (module_nonansi_header
+      (list_of_ports))
+    (module_or_generate_item
+      (net_declaration
+        (net_type)
+        (list_of_net_decl_assignments
+          (net_decl_assignment
+            (simple_identifier)))))))
+
+==================
+Upstream: net_declaration - wire [31:0]
+==================
+
+module mod ();
+  wire [31:0] a;
+endmodule
+
+---
+
+(source_file
+  (module_declaration
+    (module_header
+      (module_keyword)
+      (simple_identifier))
+    (module_nonansi_header
+      (list_of_ports))
+    (module_or_generate_item
+      (net_declaration
+        (net_type)
+        (packed_dimension
+          (constant_range
+            (constant_expression
+              (constant_primary
+                (primary_literal
+                  (integral_number
+                    (decimal_number
+                      (unsigned_number))))))
+            (constant_expression
+              (constant_primary
+                (primary_literal
+                  (integral_number
+                    (decimal_number
+                      (unsigned_number))))))))
+        (list_of_net_decl_assignments
+          (net_decl_assignment
+            (simple_identifier)))))))
+
+==================
+Upstream: net_declaration - wire [W-1:0]
+==================
+
+module mod ();
+  wire [W-1:0] a;
+endmodule
+
+---
+
+(source_file
+  (module_declaration
+    (module_header
+      (module_keyword)
+      (simple_identifier))
+    (module_nonansi_header
+      (list_of_ports))
+    (module_or_generate_item
+      (net_declaration
+        (net_type)
+        (packed_dimension
+          (constant_range
+            (constant_expression
+              (constant_expression
+                (constant_primary
+                  (simple_identifier)))
+              (constant_expression
+                (constant_primary
+                  (primary_literal
+                    (integral_number
+                      (decimal_number
+                        (unsigned_number)))))))
+            (constant_expression
+              (constant_primary
+                (primary_literal
+                  (integral_number
+                    (decimal_number
+                      (unsigned_number))))))))
+        (list_of_net_decl_assignments
+          (net_decl_assignment
+            (simple_identifier)))))))

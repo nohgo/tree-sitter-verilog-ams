@@ -1,48 +1,35 @@
-name: CI
+name: Grammar and editor tests
 
-on:
-  push:
-    branches: [master]
-    paths:
-      - grammar.js
-      - src/**
-      - test/**
-      - bindings/**
-      - binding.gyp
-  pull_request:
-    paths:
-      - grammar.js
-      - src/**
-      - test/**
-      - bindings/**
-      - binding.gyp
+on: [push, pull_request]
 
-concurrency:
-  group: ${{github.workflow}}-${{github.ref}}
-  cancel-in-progress: true
+permissions:
+  contents: read
 
 jobs:
   test:
-    name: Test parser
-    runs-on: ${{matrix.os}}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-14]
+    runs-on: ubuntu-latest
+    env:
+      CARGO_HOME: ${{ github.workspace }}/build/cargo
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Set up tree-sitter
-        uses: tree-sitter/setup-action/cli@v1
-      - name: Run tests
-        uses: tree-sitter/parser-test-action@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          test-rust: true
-          test-node: true
-          test-python: true
-          test-go: true
-          test-swift: true
-      - name: Parse examples
-        uses: tree-sitter/parse-action@v4
-        with:
-          files: examples/*
+          node-version: '22'
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install pinned Tree-sitter CLI
+        run: |
+          cargo install tree-sitter-cli --version 0.27.0 --locked
+          echo "$CARGO_HOME/bin" >> "$GITHUB_PATH"
+      - name: Install portable Neovim
+        run: |
+          curl -fL https://github.com/neovim/neovim/releases/download/v0.11.5/nvim-linux-x86_64.tar.gz -o /tmp/nvim.tar.gz
+          tar xzf /tmp/nvim.tar.gz -C /tmp
+          echo /tmp/nvim-linux-x86_64/bin >> "$GITHUB_PATH"
+      - name: Generate and check committed parser
+        run: |
+          make generate
+          git diff --exit-code -- src
+      - name: Test corpus and Neovim integration
+        run: make test
+      - name: Test Rust binding
+        run: make test-rust

@@ -1,0 +1,12 @@
+[(module_declaration)
+ (nature_declaration)
+ (discipline_declaration)
+ (connectrules_declaration)
+ (analog_seq_block)
+ (analog_function_declaration)
+ (analog_function_seq_block)
+ (analog_case_statement)
+ (seq_block)
+ (function_declaration)
+ (task_declaration)
+ (generate_region)] @fold

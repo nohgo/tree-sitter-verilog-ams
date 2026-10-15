@@ -1,40 +1,21 @@
-# Rust artifacts
-target/
+# Local editor and operating-system files.
+.DS_Store
+*.swp
+*.swo
+*~
 
-# Node artifacts
-build/
-prebuilds/
-node_modules/
-
-# Swift artifacts
-.build/
-
-# Go artifacts
-_obj/
-
-# Python artifacts
-.venv/
-dist/
-*.egg-info
-*.whl
-
-# C artifacts
-*.a
+# Dependencies and build output; generated parser sources remain trackable.
+/node_modules/
+/build/
+/target/
+*.o
+*.obj
 *.so
-*.so.*
 *.dylib
 *.dll
+
+/parser/
+/verilog_ams.so
+*.a
 *.pc
-
-# Example dirs
-/examples/*/
-
-# Grammar volatiles
-*.wasm
-*.obj
-*.o
-
-# Archives
-*.tar.gz
-*.tgz
-*.zip
+/nvim.log

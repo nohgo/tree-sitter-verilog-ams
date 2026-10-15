@@ -1,59 +1,13 @@
 {
-  "name": "tree-sitter-verilog",
-  "version": "1.0.3",
-  "description": "Verilog grammar for tree-sitter",
-  "repository": "https://github.com/tree-sitter/tree-sitter-verilog",
+  "name": "tree-sitter-verilog-ams",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Verilog-A / Verilog-AMS 2.4 grammar extending tree-sitter-verilog",
   "license": "MIT",
-  "author": {
-    "name": "Aliaksei Chapyzhenka"
-  },
-  "maintainers": [
-    {
-      "name": "Amaan Qureshi",
-      "email": "amaanq12@gmail.com"
-    }
-  ],
-  "main": "bindings/node",
-  "types": "bindings/node",
-  "keywords": [
-    "incremental",
-    "parsing",
-    "tree-sitter",
-    "verilog"
-  ],
-  "files": [
-    "grammar.js",
-    "tree-sitter.json",
-    "binding.gyp",
-    "prebuilds/**",
-    "bindings/node/*",
-    "queries/*",
-    "src/**",
-    "*.wasm"
-  ],
-  "dependencies": {
-    "node-addon-api": "^8.2.2",
-    "node-gyp-build": "^4.8.2"
-  },
-  "devDependencies": {
-    "eslint": "^9.14.0",
-    "eslint-config-treesitter": "^1.0.2",
-    "prebuildify": "^6.0.1",
-    "tree-sitter-cli": "^0.24.4"
-  },
-  "peerDependencies": {
-    "tree-sitter": "^0.21.1"
-  },
-  "peerDependenciesMeta": {
-    "tree-sitter": {
-      "optional": true
-    }
-  },
+  "files": ["grammar.js", "vendor/verilog/grammar.js", "vendor/verilog/LICENSE", "tree-sitter.json", "src/**", "queries/**", "bindings/**"],
   "scripts": {
-    "install": "node-gyp-build",
-    "lint": "eslint grammar.js",
-    "prestart": "tree-sitter build --wasm",
-    "start": "tree-sitter playground",
-    "test": "node --test bindings/node/*_test.js"
+    "generate": "tree-sitter generate --abi 15",
+    "test": "make test",
+    "build": "make build"
   }
 }

@@ -1,0 +1,21 @@
+==================
+Upstream: single line
+==================
+
+// single line comment
+
+---
+
+(source_file
+  (comment))
+
+==================
+Upstream: multi- line
+==================
+
+/* multi- line comment */
+
+---
+
+(source_file
+  (comment))
