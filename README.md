@@ -52,41 +52,43 @@ Locally verified with Tree-sitter CLI 0.27.0, parser ABI 15, Node.js 23.9.0,
 Neovim 0.11.5 and 0.12.5, and Rust Tree-sitter runtime 0.26.13. CI regenerates the parser and
 runs corpus/editor/binding checks; it uses Node.js 22 and Neovim 0.11.5.
 
-## Neovim: simplest local setup
+## Neovim: install from GitHub
 
-Run `make build`, then add this checkout to your runtimepath and opt in:
+Add this specification to your `lazy.nvim` plugins. No workspace path is needed:
 
 ```lua
-vim.opt.runtimepath:prepend(vim.fn.expand(
-  '~/hardware-github/vams-suite/tree-sitter-verilog-ams'
-))
-require('verilog_ams').setup({
-  enabled = true,
-  highlight = true,
-  diagnostics = true, -- optional; false by default
-  debounce_ms = 100,
-})
+return {
+  'nohgo/tree-sitter-verilog-ams',
+  branch = 'main',
+  version = false,
+  enabled = vim.g.enable_verilog_ams ~= false,
+  lazy = false,
+  build = 'make build',
+  main = 'verilog_ams',
+  opts = {
+    highlight = true,
+    diagnostics = true, -- optional; false by default
+    debounce_ms = 100,
+  },
+}
 ```
+
+Run `:Lazy sync` to install. Lazy clones the repository, puts it on Neovim's
+runtimepath, and runs `make build` on installation and updates. Each machine needs
+`make`, a C compiler, and Tree-sitter CLI 0.27.0 on `$PATH`. Node.js is needed only
+to regenerate the grammar, not to build the included parser sources. Restart
+Neovim after updating an already loaded parser library.
+
+The explicit `main = 'verilog_ams'` selects the Lua setup module; `branch = 'main'`
+and `version = false` select this grammar's branch rather than a release tag.
+Set `vim.g.enable_verilog_ams = false` **before Lazy setup** to disable the plugin
+on a machine. Consult the [Lazy specification](https://lazy.folke.io/spec) for
+repository sources, build hooks, and enablement options.
 
 This uses Neovim's native Tree-sitter API and works alongside `nvim-treesitter`.
 It registers `.va`, `.vams`, and `.vah` as `verilogams`, mapped to parser
 `verilog_ams`. It leaves `.v` and `.sv` associations alone. No personal editor
 files are written by this repository's build or tests.
-
-For a toggleable local `lazy.nvim` specification:
-
-```lua
-return {
-  dir = vim.fn.expand('~/hardware-github/vams-suite/tree-sitter-verilog-ams'),
-  name = 'tree-sitter-verilog-ams',
-  enabled = vim.g.enable_verilog_ams ~= false,
-  lazy = false,
-  build = 'make build',
-  config = function()
-    require('verilog_ams').setup({ diagnostics = true })
-  end,
-}
-```
 
 Use `require('verilog_ams').disable()` / `.enable()` during a session, or
 `.setup({ enabled = false })` to leave the integration disabled. Disabling clears
@@ -102,6 +104,22 @@ vim.wo.foldmethod = 'expr'
 vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
 ```
 
+## Local development setup
+
+To work directly on a checkout instead of the published version, clone it and
+build locally:
+
+```sh
+git clone https://github.com/nohgo/tree-sitter-verilog-ams.git
+cd tree-sitter-verilog-ams
+make build
+```
+
+Replace the repository string in the Lazy specification with
+`dir = vim.fn.expand('~/src/tree-sitter-verilog-ams')`, adjusting that development
+path to your checkout. Alternatively, prepend that checkout to `runtimepath` and
+call `require('verilog_ams').setup({ diagnostics = true })` directly.
+
 ## Using nvim-treesitter as the parser installer
 
 Use the API matching your installed branch; the plugin's `main` and legacy
@@ -113,10 +131,13 @@ The native setup above is the locally tested path and needs no parser installer.
 For current `main`, register immediately and again on `TSUpdate`:
 
 ```lua
-local checkout = vim.fn.expand('~/hardware-github/vams-suite/tree-sitter-verilog-ams')
 local function register()
   require('nvim-treesitter.parsers').verilog_ams = {
-    install_info = { path = checkout, queries = 'queries' },
+    install_info = {
+      url = 'https://github.com/nohgo/tree-sitter-verilog-ams',
+      branch = 'main',
+      queries = 'queries',
+    },
   }
 end
 register()
@@ -126,20 +147,20 @@ vim.filetype.add({ extension = { va = 'verilogams', vams = 'verilogams', vah = '
 -- One-time installation: require('nvim-treesitter').install({ 'verilog_ams' })
 ```
 
-For legacy `master`:
+For legacy `master`, keep this repository on `runtimepath` (for example via
+Lazy) because that installer does not copy the grammar queries:
 
 ```lua
-local checkout = vim.fn.expand('~/hardware-github/vams-suite/tree-sitter-verilog-ams')
 require('nvim-treesitter.parsers').get_parser_configs().verilog_ams = {
   install_info = {
-    url = checkout,
+    url = 'https://github.com/nohgo/tree-sitter-verilog-ams',
+    branch = 'main',
     files = { 'src/parser.c' },
     generate_requires_npm = false,
     requires_generate_from_grammar = false,
   },
   filetype = 'verilogams',
 }
-vim.opt.runtimepath:prepend(checkout) -- master does not install grammar queries
 vim.treesitter.language.register('verilog_ams', 'verilogams')
 vim.filetype.add({ extension = { va = 'verilogams', vams = 'verilogams', vah = 'verilogams' } })
 -- One-time installation: :TSInstall verilog_ams
