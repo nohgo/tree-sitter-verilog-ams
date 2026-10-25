@@ -72,3 +72,18 @@ Use native Neovim parsing for smoke tests so verification does not depend on the
 user's configuration. Document both current and legacy `nvim-treesitter`
 registration, since their custom-parser APIs differ. Keep compiled libraries and
 scratch caches local to the project.
+
+## Structural recovery and highlight priorities
+
+Structural AMS/Verilog keywords are globally reserved in the lexer. This prevents
+missing block endings from being hidden by reinterpreting a new `module`, `begin`
+or similar keyword as a user-defined discipline/type name. This is deliberately
+the structural keyword set, not a claim of complete keyword-version switching.
+SystemVerilog-only names such as `logic` and `always_ff` remain legal AMS
+identifiers when used as names, and escaped identifiers remain supported.
+
+Semantic captures use explicit priorities above generic identifiers. Discipline
+references are types; standard `electrical` references use `@type.builtin`.
+Nature/discipline definitions, functions, module names and parameters retain their
+semantic coloring even when their CST nodes wrap a generic identifier. Native
+Neovim tests check the winning capture priority rather than mere capture presence.

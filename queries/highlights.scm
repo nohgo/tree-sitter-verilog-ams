@@ -1,16 +1,30 @@
 (comment) @comment
 (simple_identifier) @variable
 (escaped_identifier) @variable
-(discipline_identifier) @type
-(nature_declaration name: (_) @type.definition)
-(nature_reference) @type
-(nature_binding nature: (_) @type)
+((discipline_identifier) @type
+ (#set! priority 110))
+((discipline_identifier) @type.builtin
+ (#eq? @type.builtin "electrical")
+ (#set! priority 120))
+((nature_declaration name: (_) @type.definition)
+ (#set! priority 110))
+((discipline_declaration name: (_) @type.definition)
+ (#set! priority 110))
+((nature_reference) @type
+ (#set! priority 110))
+((nature_binding nature: (_) @type)
+ (#set! priority 110))
 (nature_attribute name: (_) @property)
-(module_header name: (_) @module)
-(function_identifier) @function
-(function_call function: (_) @function.call)
-(branch_access access: (_) @function.call)
-(param_assignment name: (_) @constant)
+((module_header name: (_) @module)
+ (#set! priority 110))
+((function_identifier) @function
+ (#set! priority 110))
+((function_call function: (_) @function.call)
+ (#set! priority 110))
+((branch_access access: (_) @function.call)
+ (#set! priority 110))
+((param_assignment name: (_) @constant)
+ (#set! priority 110))
 (system_tf_identifier) @function.builtin
 
 ((function_call function: (_) @function.builtin)
@@ -20,7 +34,8 @@
    "laplace_nd" "laplace_np" "laplace_zd" "laplace_zp" "zi_nd" "zi_np" "zi_zd" "zi_zp"
    "white_noise" "flicker_noise" "noise_table" "noise_table_log"
    "sin" "cos" "tan" "asin" "acos" "atan" "atan2" "sinh" "cosh" "tanh"
-   "exp" "ln" "log" "sqrt" "pow" "abs" "min" "max" "ceil" "floor" "hypot"))
+   "exp" "ln" "log" "sqrt" "pow" "abs" "min" "max" "ceil" "floor" "hypot")
+ (#set! priority 120))
 
 (unsigned_number) @number
 (binary_number) @number

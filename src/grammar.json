@@ -31579,5 +31579,156 @@
     "cross_identifier"
   ],
   "supertypes": [],
-  "reserved": {}
+  "reserved": {
+    "global": [
+      {
+        "type": "STRING",
+        "value": "module"
+      },
+      {
+        "type": "STRING",
+        "value": "macromodule"
+      },
+      {
+        "type": "STRING",
+        "value": "connectmodule"
+      },
+      {
+        "type": "STRING",
+        "value": "endmodule"
+      },
+      {
+        "type": "STRING",
+        "value": "nature"
+      },
+      {
+        "type": "STRING",
+        "value": "endnature"
+      },
+      {
+        "type": "STRING",
+        "value": "discipline"
+      },
+      {
+        "type": "STRING",
+        "value": "enddiscipline"
+      },
+      {
+        "type": "STRING",
+        "value": "analog"
+      },
+      {
+        "type": "STRING",
+        "value": "initial"
+      },
+      {
+        "type": "STRING",
+        "value": "always"
+      },
+      {
+        "type": "STRING",
+        "value": "begin"
+      },
+      {
+        "type": "STRING",
+        "value": "end"
+      },
+      {
+        "type": "STRING",
+        "value": "function"
+      },
+      {
+        "type": "STRING",
+        "value": "endfunction"
+      },
+      {
+        "type": "STRING",
+        "value": "task"
+      },
+      {
+        "type": "STRING",
+        "value": "endtask"
+      },
+      {
+        "type": "STRING",
+        "value": "case"
+      },
+      {
+        "type": "STRING",
+        "value": "casex"
+      },
+      {
+        "type": "STRING",
+        "value": "casez"
+      },
+      {
+        "type": "STRING",
+        "value": "endcase"
+      },
+      {
+        "type": "STRING",
+        "value": "if"
+      },
+      {
+        "type": "STRING",
+        "value": "else"
+      },
+      {
+        "type": "STRING",
+        "value": "for"
+      },
+      {
+        "type": "STRING",
+        "value": "while"
+      },
+      {
+        "type": "STRING",
+        "value": "repeat"
+      },
+      {
+        "type": "STRING",
+        "value": "forever"
+      },
+      {
+        "type": "STRING",
+        "value": "generate"
+      },
+      {
+        "type": "STRING",
+        "value": "endgenerate"
+      },
+      {
+        "type": "STRING",
+        "value": "fork"
+      },
+      {
+        "type": "STRING",
+        "value": "join"
+      },
+      {
+        "type": "STRING",
+        "value": "specify"
+      },
+      {
+        "type": "STRING",
+        "value": "endspecify"
+      },
+      {
+        "type": "STRING",
+        "value": "table"
+      },
+      {
+        "type": "STRING",
+        "value": "endtable"
+      },
+      {
+        "type": "STRING",
+        "value": "connectrules"
+      },
+      {
+        "type": "STRING",
+        "value": "endconnectrules"
+      }
+    ]
+  }
 }

@@ -28,6 +28,22 @@ function prune(rule, excluded) {
 module.exports = grammar(verilog, {
   name: 'verilog_ams',
 
+  // Structural keywords must not turn into discipline/type identifiers when a
+  // damaged block changes the lexical context. SV-only names such as `logic`
+  // and `always_ff`, and user-defined discipline names, remain ordinary names.
+  reserved: {
+    global: _ => [
+      'module', 'macromodule', 'connectmodule', 'endmodule',
+      'nature', 'endnature', 'discipline', 'enddiscipline',
+      'analog', 'initial', 'always', 'begin', 'end',
+      'function', 'endfunction', 'task', 'endtask',
+      'case', 'casex', 'casez', 'endcase', 'if', 'else',
+      'for', 'while', 'repeat', 'forever', 'generate', 'endgenerate',
+      'fork', 'join', 'specify', 'endspecify', 'table', 'endtable',
+      'connectrules', 'endconnectrules',
+    ],
+  },
+
   conflicts: $ => [
     [$.delayed_data, $.delayed_reference],
     [$.primary, $.terminal_identifier],

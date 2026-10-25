@@ -30,6 +30,8 @@ for _, path in ipairs(vim.fn.glob('examples/*', false, true)) do
 end
 
 local invalid = {
+  ['missing endmodule before another module'] = 'module first; wire a; module second; wire b; endmodule',
+  ['reserved block keyword as type'] = 'module m; begin n; endmodule',
   ['missing semicolon'] = 'module m; electrical p analog V(p) <+ 1; endmodule',
   ['unclosed analog block'] = 'module m; analog begin V(p) <+ 1; endmodule',
   ['missing endmodule'] = 'module m; analog V(p) <+ 1;',
@@ -60,6 +62,8 @@ local recovered = tree('module m; analog begin x = 1 end endmodule')
 local missing = false
 walk(recovered, function(node) if node:missing() then missing = true end end)
 assert(missing, 'Missing token recovery must be exposed')
+
+assert_valid('discipline logic; domain discrete; enddiscipline module always_ff; logic n; reg always_comb; endmodule', 'legacy SV-only identifiers stay legal AMS names')
 
 -- Comments, directives, and opaque macro bodies retain exact source ranges.
 local preserved = '// μ comment\r\n`define SCALE(x) ((x) * 2)\r\nmodule m; /* body */ analog V(p) <+ `SCALE(1.0); endmodule'
@@ -92,7 +96,23 @@ end
 assert(captures['keyword:analog'])
 assert(captures['operator:<+'])
 assert(captures['function.builtin:ddt'])
-assert(captures['type:electrical'])
+assert(captures['type.builtin:electrical'])
+-- A parent type capture must actually outrank the generic identifier capture.
+local typed = 'discipline custom; domain discrete; enddiscipline\nmodule m; electrical p; custom d; real x; endmodule'
+local typed_root = assert_valid(typed)
+local priorities = {}
+for id, node, metadata in highlights:iter_captures(typed_root, typed) do
+  local text = vim.treesitter.get_node_text(node, typed)
+  local capture = highlights.captures[id]
+  local priority = tonumber((metadata[id] or {}).priority or metadata.priority) or 100
+  if text == 'electrical' or text == 'custom' or text == 'real' then
+    local old = priorities[text]
+    if not old or priority >= old.priority then priorities[text] = { capture = capture, priority = priority } end
+  end
+end
+assert(priorities.electrical.capture == 'type.builtin', vim.inspect(priorities))
+assert(priorities.custom.capture:find('type', 1, true), vim.inspect(priorities))
+assert(priorities.real.capture == 'type.builtin', vim.inspect(priorities))
 assert(captures['function.call:I'])
 assert(folds:iter_captures(sample_root, sample)() ~= nil, 'Fold query must match')
 

@@ -56,3 +56,8 @@ simulator-qualified device models or redistributed PDK sources.
 No Cadence compile, large proprietary model-library benchmark, or licensed
 simulation validation has been performed. The editor tests use an isolated
 `-u NONE -i NONE` session and do not inspect or modify personal Neovim files.
+
+Structural recovery regressions reject a new module before a missing `endmodule`
+and block keywords used as unescaped type names. Highlighting tests verify that
+`electrical` wins as a built-in type and custom disciplines win as types on Neovim
+0.11/0.12. Nature and discipline header semicolons remain optional per the LRM.
